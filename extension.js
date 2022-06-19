@@ -9,9 +9,9 @@ function activate(context) {
 	console.log('Starting Start Stop Button Extension');
 
 	let debugging = false;
-	let extensionPath = context.extensionPath;
+	const extensionPath = context.extensionPath;
 
-	sendState = (value) => {
+	const sendState = (value) => {
 		let data = value ? 'ON' : 'OFF';
 		let cmd = path.format({ dir: extensionPath, base: 'startstop.py' });
 		exec(`python ${cmd} led 0 ${data}`, (err, stdout, stderr) => { });
