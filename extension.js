@@ -1,15 +1,6 @@
 const vscode = require('vscode');
 const { exec } = require("child_process");
-
-function sendState(port, value) {
-	if (port == undefined) {
-		return;
-	}
-
-	let data = value ? 'ON' : 'OFF';
-
-	exec(`startstop led 0 ${data}`, (err, stdout, stderr) => { });
-}
+const path = require('node:path');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -18,6 +9,13 @@ function activate(context) {
 	console.log('Starting Start Stop Button Extension');
 
 	let debugging = false;
+	let extensionPath = context.extensionPath;
+
+	sendState = (value) => {
+		let data = value ? 'ON' : 'OFF';
+		let cmd = path.format({ dir: extensionPath, base: 'startstop.py' });
+		exec(`python ${cmd} led 0 ${data}`, (err, stdout, stderr) => { });
+	};
 
 	vscode.debug.onDidChangeActiveDebugSession((e) => {
 		if (e == undefined) {
@@ -30,7 +28,7 @@ function activate(context) {
 			console.log("Starting debugging");
 			debugging = true;
 		}
-		sendState(port, debugging);
+		sendState(debugging);
 	});
 }
 
