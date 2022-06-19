@@ -2,6 +2,15 @@ import sys
 import serial
 import serial.tools.list_ports
 
+def help():
+    print("Usage: startstop.py led <led> [ON|OFF]")
+    print("       startstop.py help")
+
+
+def help_and_quit():
+    help()
+    sys.exit(0)
+
 def set_led(port, led, state):
     ser = serial.Serial(port, 115200, timeout=1)
     ser.write(f'{led}{state}\r'.encode())
@@ -22,7 +31,7 @@ if device_port == None:
 
 if len(sys.argv) == 1:
     print("No arguments")
-    quit()
+    help_and_quit()
 
 mode = sys.argv[1]
 
@@ -31,14 +40,16 @@ if mode == "led":
         led = int(sys.argv[2])
         if led < 0 or led > 1:
             print("Invalid LED number")
-            quit()
+            help_and_quit()
         state = "ON"
         if len(sys.argv) == 4:
             state = sys.argv[3].upper()
             if state != "ON" and state != "OFF":
                 print("Invalid state")
-                quit()
+                help_and_quit()
         set_led(device_port.device, led, state)
     else:
         print("No LED specified")
-        quit()
+        help_and_quit()
+elif mode == "help":
+    help()
